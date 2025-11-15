@@ -116,6 +116,26 @@ window.oracleData = {
       time: '2d ago',
     },
   ],
+  status: [
+    {
+      name: 'Smite 2 API Adapter',
+      state: 'Ready',
+      detail: 'Endpoints mapped and sanitized—awaiting official schema drop.',
+      updated: 'Standing by for beta patch',
+    },
+    {
+      name: 'Match Timeline Parser',
+      state: 'Building',
+      detail: 'Expanding support for cross-platform identifiers and role icons.',
+      updated: 'ETA: Next sprint',
+    },
+    {
+      name: 'Oracle CDN Edge',
+      state: 'Planning',
+      detail: 'Evaluating image proxy + replay cache to speed up hero art.',
+      updated: 'Design review Friday',
+    },
+  ],
   roadmap: [
     {
       phase: 'Now',

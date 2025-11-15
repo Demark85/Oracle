@@ -76,6 +76,24 @@ function renderNews() {
   });
 }
 
+function renderStatus() {
+  const grid = document.getElementById('status-grid');
+  data.status.forEach((item) => {
+    const card = document.createElement('div');
+    card.className = 'status-card';
+    const stateClass = item.state.toLowerCase().replace(/\s+/g, '-');
+    card.innerHTML = `
+      <div class="status-card-head">
+        <h4>${item.name}</h4>
+        <span class="status-pill ${stateClass}">${item.state}</span>
+      </div>
+      <p>${item.detail}</p>
+      <p class="status-updated">${item.updated}</p>
+    `;
+    grid.appendChild(card);
+  });
+}
+
 function renderRoadmap() {
   const grid = document.getElementById('roadmap-grid');
   data.roadmap.forEach((item) => {
@@ -128,6 +146,7 @@ function init() {
   renderGods();
   renderMatches();
   renderNews();
+  renderStatus();
   renderRoadmap();
   renderPlayerCard();
   bindSearch();
