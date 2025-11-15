@@ -162,4 +162,70 @@ window.oracleData = {
       status: 'Exploratory research',
     },
   ],
+  toolkit: [
+    {
+      title: 'Player dossiers',
+      description: 'Pin mains, visualize MMR shifts, and export weekly scouting briefs.',
+      status: 'Ready',
+      tasks: ['Profile overview shell', 'Season graph templates', 'CSV exporter hook'],
+    },
+    {
+      title: 'Match breakdowns',
+      description: 'Timeline parser with highlight markers, ban tracking, and POV swaps.',
+      status: 'Building',
+      tasks: ['Combat log reducer', 'Role badge renderer', 'Shareable permalink'],
+    },
+    {
+      title: 'Meta heatmap',
+      description: 'Compare pick/ban trends across queues, splits, and ranks.',
+      status: 'Planning',
+      tasks: ['Segmented filters', 'Live patch context', 'God comparison matrix'],
+    },
+    {
+      title: 'Content kits',
+      description: 'Auto-generate recap cards + lower-thirds sized for short-form video.',
+      status: 'Prototype',
+      tasks: ['Template JSON', 'PNG export', 'Social scheduler'],
+    },
+  ],
+  onboarding: [
+    {
+      step: 1,
+      title: 'Clone the starter',
+      detail: 'git clone && npm install (optional). Everything runs on vanilla HTML/JS.',
+    },
+    {
+      step: 2,
+      title: 'Swap data providers',
+      detail: 'Replace scripts/data.js arrays with your fetchers once endpoints unlock.',
+    },
+    {
+      step: 3,
+      title: 'Brand it',
+      detail: 'Edit styles.css tokens + logos to match your org or community colors.',
+    },
+    {
+      step: 4,
+      title: 'Deploy anywhere',
+      detail: 'Push to GitHub Pages or drop into Netlify/Vercel for automatic previews.',
+    },
+  ],
+  faqs: [
+    {
+      question: 'Can I host Oracle for my org?',
+      answer: 'Yes. The project is static and works on any host. Swap branding + data and go.',
+    },
+    {
+      question: 'How do updates roll out when Smite 2 ships?',
+      answer: 'Drop in the official API client, update the mock dataset, and redeploy. Components were built for hot-swapping data sources.',
+    },
+    {
+      question: 'Do I need a backend?',
+      answer: 'No. Use the static site for read-only dashboards or add your own backend later for auth + personalization.',
+    },
+    {
+      question: 'Is there a way to contribute?',
+      answer: 'Open a PR with new widgets, file an issue, or reach out via the signup form so we can coordinate.',
+    },
+  ],
 };

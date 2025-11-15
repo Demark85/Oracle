@@ -21,6 +21,8 @@
           <li><a href="#leaderboard">Leaderboard</a></li>
           <li><a href="#meta">Meta</a></li>
           <li><a href="#matches">Matches</a></li>
+          <li><a href="#toolkit">Toolkit</a></li>
+          <li><a href="#docs">Docs</a></li>
         </ul>
         <button class="cta">Create Profile</button>
       </nav>
@@ -131,6 +133,94 @@
           <p class="section-subtitle">Blueprint for the live service launch.</p>
         </div>
         <div id="roadmap-grid" class="roadmap-grid"></div>
+      </section>
+
+      <section id="toolkit" class="panel toolkit">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Creator Ready</p>
+            <h2>Launch Toolkit</h2>
+          </div>
+          <p class="section-subtitle">
+            Pre-built modules you can wire up the moment the API unlocks.
+          </p>
+        </div>
+        <div id="toolkit-grid" class="toolkit-grid"></div>
+      </section>
+
+      <section id="docs" class="panel docs">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Quickstart</p>
+            <h2>Stand Up Oracle for Your Team</h2>
+          </div>
+          <p class="section-subtitle">Copy, configure, and ship in under ten minutes.</p>
+        </div>
+        <div class="docs-wrapper">
+          <ol id="onboarding-list" class="onboarding-list"></ol>
+          <div class="docs-card">
+            <h3>Need deeper integration?</h3>
+            <p>
+              Plug in your auth provider, swap the mock data fetchers for real
+              endpoints, and restyle via <code>styles.css</code>. The markup is
+              component-driven, so replacing datasets is painless.
+            </p>
+            <ul>
+              <li>Supports static hosting on Netlify, Vercel, or GitHub Pages.</li>
+              <li>Tree-shaken vanilla JS—no frameworks required.</li>
+              <li>
+                Ready for hydration once Hi-Rez exposes player + match APIs.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel community">
+        <div class="community-content">
+          <div>
+            <p class="eyebrow">Community Ops</p>
+            <h2>Keep your roster updated</h2>
+            <p>
+              Subscribe for drop notifications, beta invites, and prefab data
+              packs you can hand to your analysts or content leads.
+            </p>
+            <div id="community-status" class="community-status">
+              Waiting for signup...
+            </div>
+          </div>
+          <form id="signup-form" class="signup-form">
+            <label>
+              Contact name
+              <input type="text" name="name" placeholder="Morgan, Team Lead" required />
+            </label>
+            <label>
+              Work email
+              <input type="email" name="email" placeholder="you@example.gg" required />
+            </label>
+            <label>
+              Focus
+              <select name="focus" required>
+                <option value="">Select your priority</option>
+                <option value="team-ops">Team Ops + Scouting</option>
+                <option value="content">Content + Social</option>
+                <option value="community">Community Programs</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <button type="submit" class="primary">Notify Me</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="panel faq">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Help Desk</p>
+            <h2>Frequently Asked Questions</h2>
+          </div>
+        </div>
+        <div id="faq-grid" class="faq-grid"></div>
       </section>
     </main>
 

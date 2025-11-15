@@ -109,6 +109,54 @@ function renderRoadmap() {
   });
 }
 
+function renderToolkit() {
+  const grid = document.getElementById('toolkit-grid');
+  data.toolkit.forEach((item) => {
+    const card = document.createElement('div');
+    card.className = 'toolkit-card';
+    const taskList = item.tasks.map((task) => `<li>${task}</li>`).join('');
+    const statusClass = item.status.toLowerCase();
+    card.innerHTML = `
+      <div class="toolkit-head">
+        <h4>${item.title}</h4>
+        <span class="status-pill ${statusClass}">${item.status}</span>
+      </div>
+      <p>${item.description}</p>
+      <h5>Includes</h5>
+      <ul>${taskList}</ul>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function renderOnboarding() {
+  const list = document.getElementById('onboarding-list');
+  data.onboarding.forEach((item) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span class="step">${item.step}</span>
+      <div>
+        <h4>${item.title}</h4>
+        <p>${item.detail}</p>
+      </div>
+    `;
+    list.appendChild(li);
+  });
+}
+
+function renderFaq() {
+  const grid = document.getElementById('faq-grid');
+  data.faqs.forEach((item) => {
+    const card = document.createElement('div');
+    card.className = 'faq-card';
+    card.innerHTML = `
+      <h4>${item.question}</h4>
+      <p>${item.answer}</p>
+    `;
+    grid.appendChild(card);
+  });
+}
+
 function renderPlayerCard(player) {
   const container = document.getElementById('player-card');
   if (!player) {
@@ -141,6 +189,20 @@ function bindSearch() {
   });
 }
 
+function bindSignup() {
+  const form = document.getElementById('signup-form');
+  const status = document.getElementById('community-status');
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const name = formData.get('name') || 'friend';
+    const focus = formData.get('focus') || 'your priorities';
+    const focusLabel = focus.replace('-', ' ');
+    status.textContent = `Welcome, ${name}! We will send toolkit drops tailored to ${focusLabel}.`;
+    form.reset();
+  });
+}
+
 function init() {
   renderLeaderboard();
   renderGods();
@@ -148,8 +210,12 @@ function init() {
   renderNews();
   renderStatus();
   renderRoadmap();
+  renderToolkit();
+  renderOnboarding();
+  renderFaq();
   renderPlayerCard();
   bindSearch();
+  bindSignup();
 }
 
 document.addEventListener('DOMContentLoaded', init);
