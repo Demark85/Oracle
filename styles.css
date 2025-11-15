@@ -41,13 +41,8 @@ body::before {
 }
 
 body::after {
-  background: linear-gradient(
-    180deg,
-    rgba(5, 12, 29, 0.1) 0%,
-    rgba(5, 12, 29, 0.45) 45%,
-    rgba(5, 12, 29, 0.75) 100%
-  );
-  opacity: 0.9;
+  background: rgba(5, 12, 29, 0.35);
+  backdrop-filter: blur(30px);
 }
 
 a {
