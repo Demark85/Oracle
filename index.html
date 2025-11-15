@@ -24,7 +24,7 @@
           <li><a href="#toolkit">Toolkit</a></li>
           <li><a href="#docs">Docs</a></li>
         </ul>
-        <button class="cta">Create Profile</button>
+        <button class="cta" id="create-profile-trigger">Create Profile</button>
       </nav>
       <div class="hero-content">
         <p class="beta-pill">Smite 2 Companion • Sample Data</p>
@@ -232,6 +232,56 @@
         <a href="#">Contact</a>
       </div>
     </footer>
+
+    <div id="profile-modal" class="modal" aria-hidden="true">
+      <div class="modal-content" role="dialog" aria-labelledby="profile-modal-title">
+        <button id="profile-close" class="modal-close" aria-label="Close create profile form">×</button>
+        <p class="eyebrow">Prototype</p>
+        <h3 id="profile-modal-title">Create a sample Oracle profile</h3>
+        <p class="modal-intro">
+          Use this form to craft a mock profile for your roster. Entries stay
+          local to your browser so you can iterate freely until the real API
+          lands.
+        </p>
+        <div id="profile-message" class="modal-message" role="status"></div>
+        <form id="profile-form" class="profile-form">
+          <label>
+            Player name
+            <input type="text" name="name" placeholder="Oracle.Nyx" required />
+          </label>
+          <label>
+            Competitive title
+            <input type="text" name="title" placeholder="Mythic III • Mid" required />
+          </label>
+          <label>
+            Favorite god
+            <input type="text" name="favoriteGod" placeholder="Morgan Le Fay" required />
+          </label>
+          <label>
+            MMR
+            <input type="number" name="mmr" placeholder="3300" required min="1" />
+          </label>
+          <label>
+            Win rate (%)
+            <input type="number" name="winRate" placeholder="61" required min="0" max="100" />
+          </label>
+          <label>
+            KDA spread
+            <input type="text" name="kda" placeholder="5.2 / 2.3 / 9.0" required />
+          </label>
+          <label>
+            Avg damage
+            <input type="number" name="damage" placeholder="23000" required min="0" />
+          </label>
+          <label>
+            Gold / minute
+            <input type="number" name="goldPerMin" placeholder="590" required min="0" />
+          </label>
+          <button type="submit" class="primary">Save profile</button>
+        </form>
+        <p class="modal-hint">Tip: your new entry is searchable via the Player Lookup widget.</p>
+      </div>
+    </div>
 
     <script src="scripts/data.js"></script>
     <script src="scripts/app.js"></script>

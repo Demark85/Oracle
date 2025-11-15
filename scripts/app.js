@@ -203,6 +203,84 @@ function bindSignup() {
   });
 }
 
+function bindProfileModal() {
+  const modal = document.getElementById('profile-modal');
+  const trigger = document.getElementById('create-profile-trigger');
+  const closeButton = document.getElementById('profile-close');
+  const form = document.getElementById('profile-form');
+  const message = document.getElementById('profile-message');
+  const searchInput = document.querySelector('#player-search input[name="player"]');
+
+  if (!modal || !trigger || !form) return;
+
+  const firstInput = form.querySelector('input');
+
+  const openModal = () => {
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    message.textContent = '';
+    if (firstInput) {
+      firstInput.focus();
+    }
+  };
+
+  const closeModal = () => {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  };
+
+  trigger.addEventListener('click', openModal);
+  closeButton?.addEventListener('click', closeModal);
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const name = formData.get('name')?.toString().trim();
+    if (!name) {
+      message.textContent = 'A name is required to save the profile.';
+      return;
+    }
+
+    const newProfile = {
+      name,
+      title: formData.get('title')?.toString().trim() || 'Unranked',
+      favoriteGod: formData.get('favoriteGod')?.toString().trim() || 'Unknown',
+      mmr: Number(formData.get('mmr')) || 0,
+      winRate: Number(formData.get('winRate')) || 0,
+      kda: formData.get('kda')?.toString().trim() || '0 / 0 / 0',
+      damage: Number(formData.get('damage')) || 0,
+      goldPerMin: Number(formData.get('goldPerMin')) || 0,
+    };
+
+    const existingIndex = data.players.findIndex(
+      (player) => player.name.toLowerCase() === newProfile.name.toLowerCase(),
+    );
+    if (existingIndex >= 0) {
+      data.players.splice(existingIndex, 1);
+    }
+    data.players.unshift(newProfile);
+
+    renderPlayerCard(newProfile);
+    if (searchInput) {
+      searchInput.value = newProfile.name;
+    }
+    message.textContent = `Profile saved! You can now search for ${newProfile.name}.`;
+    form.reset();
+
+    setTimeout(() => {
+      closeModal();
+      document.getElementById('stats')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 900);
+  });
+}
+
 function init() {
   renderLeaderboard();
   renderGods();
@@ -216,6 +294,7 @@ function init() {
   renderPlayerCard();
   bindSearch();
   bindSignup();
+  bindProfileModal();
 }
 
 document.addEventListener('DOMContentLoaded', init);

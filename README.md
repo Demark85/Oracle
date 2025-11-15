@@ -3,10 +3,10 @@
 Concept landing page for a future Smite 2 statistics companion (inspired by SmiteGuru) that renders against curated mock data while we wait for the official API.
 
 ## Structure
-- `index.html` – markup for the hero, player search, leaderboard, meta, match feed, service health, news, roadmap, toolkit, docs, community, and FAQ panels.
-- `styles.css` – neon-dark design language inspired by esports dashboards with extra layouts for the toolkit cards, onboarding steps, signup form, and FAQ grid.
+- `index.html` – markup for the hero, player search, leaderboard, meta, match feed, service health, news, roadmap, toolkit, docs, community, FAQ panels, plus the new Create Profile modal shell.
+- `styles.css` – neon-dark design language inspired by esports dashboards with extra layouts for the toolkit cards, onboarding steps, signup form, FAQ grid, and modal treatment.
 - `scripts/data.js` – sample player, leaderboard, meta, match, service health, news, roadmap, toolkit, onboarding, and FAQ data.
-- `scripts/app.js` – lightweight render + search helpers powering every panel, including the toolkit grid, onboarding list, FAQ entries, and signup form messaging.
+- `scripts/app.js` – lightweight render + search helpers powering every panel, including the toolkit grid, onboarding list, FAQ entries, signup form messaging, and the Create Profile workflow.
 
 ## Getting started
 Open `index.html` in any modern browser. No build tooling or external dependencies are required.
