@@ -1,3 +1,5 @@
+# Oracle
+
 Concept landing page for a future Smite 2 statistics companion (inspired by SmiteGuru) that renders against curated mock data while we wait for the official API.
 
 ## Structure

@@ -26,8 +26,7 @@ body {
   overflow-x: hidden;
 }
 
-body::before,
-body::after {
+body::before {
   content: '';
   position: fixed;
   inset: 0;
@@ -37,12 +36,14 @@ body::after {
 
 body::before {
   background: radial-gradient(circle at 20% 20%, rgba(95, 255, 246, 0.12), transparent 50%),
-    radial-gradient(circle at 80% 0%, rgba(179, 147, 255, 0.2), transparent 45%);
-}
-
-body::after {
-  background: rgba(5, 12, 29, 0.35);
-  backdrop-filter: blur(30px);
+      radial-gradient(circle at 80% 0%, rgba(179, 147, 255, 0.2), transparent 45%),
+      linear-gradient(
+        180deg,
+        rgba(5, 12, 29, 0.08) 0%,
+        rgba(5, 12, 29, 0.35) 40%,
+        rgba(5, 12, 29, 0.65) 100%
+      );
+  opacity: 0.95;
 }
 
 a {
