@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oracle - Smite 2 Companion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <nav class="nav">
+        <div class="logo">Oracle</div>
+        <ul>
+          <li><a href="#stats">Player Stats</a></li>
+          <li><a href="#leaderboard">Leaderboard</a></li>
+          <li><a href="#meta">Meta</a></li>
+          <li><a href="#matches">Matches</a></li>
+        </ul>
+        <button class="cta">Create Profile</button>
+      </nav>
+      <div class="hero-content">
+        <p class="beta-pill">Smite 2 Companion • Sample Data</p>
+        <h1>Your Oracle for the Battleground of the Gods</h1>
+        <p>
+          Track performance, explore builds, and stay ahead of the meta with a
+          modern dashboard inspired by SmiteGuru.
+        </p>
+        <div class="hero-actions">
+          <button class="primary">Explore Leaderboards</button>
+          <button class="secondary">See Patch Notes</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3>Live Queue Snapshot</h3>
+        <p>Players online</p>
+        <div class="stat" id="players-online">36,420</div>
+        <p>Average queue time</p>
+        <div class="stat">1m 42s</div>
+        <small>* Mock values until Smite 2 API arrives.</small>
+      </div>
+    </header>
+
+    <main>
+      <section id="stats" class="panel search-panel">
+        <div>
+          <h2>Player Lookup</h2>
+          <p>Search against curated sample profiles.</p>
+          <form id="player-search">
+            <input
+              type="text"
+              name="player"
+              placeholder="Enter player or team"
+              autocomplete="off"
+            />
+            <button type="submit">Search</button>
+          </form>
+          <p class="hint">
+            Profiles update automatically when the official API becomes
+            available.
+          </p>
+        </div>
+        <div id="player-card" class="player-card"></div>
+      </section>
+
+      <section id="leaderboard" class="panel">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Ranked Conquest</p>
+            <h2>Mythic Leaderboard</h2>
+          </div>
+          <button class="secondary">View Full Ladder</button>
+        </div>
+        <div class="table" id="leaderboard-table"></div>
+      </section>
+
+      <section id="meta" class="panel meta-grid">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Meta Radar</p>
+            <h2>Trending Gods & Builds</h2>
+          </div>
+          <button class="secondary">Share Loadout</button>
+        </div>
+        <div id="god-grid" class="god-grid"></div>
+      </section>
+
+      <section id="matches" class="panel matches">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Recent Competition</p>
+            <h2>Match Timeline</h2>
+          </div>
+          <button class="secondary">Export Data</button>
+        </div>
+        <div id="match-feed" class="match-feed"></div>
+      </section>
+
+      <section class="panel status">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Service Pulse</p>
+            <h2>Systems Health</h2>
+          </div>
+          <p class="section-subtitle">What the team is stabilizing before launch.</p>
+        </div>
+        <div id="status-grid" class="status-grid"></div>
+      </section>
+
+      <section class="panel news">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Patch Watch</p>
+            <h2>Smite 2 News Pulse</h2>
+          </div>
+        </div>
+        <div id="news-grid" class="news-grid"></div>
+      </section>
+
+      <section class="panel roadmap">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">What's Next</p>
+            <h2>Oracle Roadmap</h2>
+          </div>
+          <p class="section-subtitle">Blueprint for the live service launch.</p>
+        </div>
+        <div id="roadmap-grid" class="roadmap-grid"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Oracle is a fan concept inspired by SmiteGuru. All data is fictional.</p>
+      <div class="footer-links">
+        <a href="#">Roadmap</a>
+        <a href="#">Privacy</a>
+        <a href="#">Contact</a>
+      </div>
+    </footer>
+
+    <script src="scripts/data.js"></script>
+    <script src="scripts/app.js"></script>
+  </body>
+</html>
