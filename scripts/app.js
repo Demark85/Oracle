@@ -1,300 +1,138 @@
-const data = window.oracleData;
+const MAX_SEGMENTS = 4;
+const container = document.getElementById('segments-container');
+const template = document.getElementById('segment-template');
+const form = document.getElementById('segments-form');
+const results = document.getElementById('results');
+const statusEl = document.getElementById('status');
 
-function renderLeaderboard() {
-  const table = document.getElementById('leaderboard-table');
-  const header = document.createElement('div');
-  header.className = 'table-row header';
-  header.innerHTML = '<span>#</span><span>Player</span><span>Role</span><span>MMR</span><span>Win %</span>';
-  table.appendChild(header);
+function addSegment(data = {}) {
+  if (container.children.length >= MAX_SEGMENTS) return;
+  const node = template.content.firstElementChild.cloneNode(true);
+  node.querySelector('[data-segment-number]').textContent = container.children.length + 1;
 
-  data.leaderboard.forEach((entry) => {
-    const row = document.createElement('div');
-    row.className = 'table-row';
-    row.innerHTML = `
-      <span class="rank-chip">${entry.rank}</span>
-      <span>${entry.player}</span>
-      <span>${entry.role}</span>
-      <span>${entry.mmr}</span>
-      <span>${entry.wr}</span>
-    `;
-    table.appendChild(row);
+  ['origin', 'destination', 'mode', 'departure_time'].forEach((field) => {
+    const input = node.querySelector(`[data-field="${field}"]`);
+    if (data[field]) input.value = data[field];
+  });
+
+  node.querySelector('[data-remove]').addEventListener('click', () => {
+    node.remove();
+    renumber();
+  });
+
+  container.appendChild(node);
+}
+
+function renumber() {
+  [...container.children].forEach((segment, idx) => {
+    segment.querySelector('[data-segment-number]').textContent = idx + 1;
   });
 }
 
-function renderGods() {
-  const grid = document.getElementById('god-grid');
-  data.gods.forEach((god) => {
+function collectSegments() {
+  return [...container.children].map((segment) => ({
+    origin: segment.querySelector('[data-field="origin"]').value.trim(),
+    destination: segment.querySelector('[data-field="destination"]').value.trim(),
+    mode: segment.querySelector('[data-field="mode"]').value,
+    departure_time: segment.querySelector('[data-field="departure_time"]').value,
+  }));
+}
+
+async function fetchDirections(apiKey, segment) {
+  const departureUnix = Math.floor(new Date(segment.departure_time).getTime() / 1000);
+  const params = new URLSearchParams({
+    origin: segment.origin,
+    destination: segment.destination,
+    mode: segment.mode.toLowerCase(),
+    departure_time: String(departureUnix),
+    key: apiKey,
+  });
+
+  const url = `https://maps.googleapis.com/maps/api/directions/json?${params}`;
+  const resp = await fetch(url);
+  const json = await resp.json();
+  if (json.status !== 'OK' || !json.routes?.length) {
+    throw new Error(`Directions failed (${json.status}) for ${segment.origin} → ${segment.destination}`);
+  }
+  const leg = json.routes[0].legs[0];
+  const durationSeconds = leg.duration?.value;
+  if (!durationSeconds) throw new Error('Missing duration in API response.');
+  return { durationSeconds, distanceText: leg.distance?.text || 'N/A', durationText: leg.duration?.text || 'N/A' };
+}
+
+function fmtDate(date) {
+  return date.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit', month: 'short', day: 'numeric' });
+}
+
+function fmtDuration(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.round((seconds % 3600) / 60);
+  return `${h}h ${m}m`;
+}
+
+function renderItinerary(items) {
+  results.innerHTML = '';
+  const totalTravelSeconds = items.reduce((sum, s) => sum + s.durationSeconds, 0);
+  const start = new Date(items[0].departure);
+  const end = new Date(items[items.length - 1].arrival);
+
+  items.forEach((item, idx) => {
     const card = document.createElement('div');
-    card.className = 'god-card';
-    const buildList = god.build.map((item) => `<li>${item}</li>`).join('');
+    card.className = 'result-card';
+    const wait = idx > 0 ? (new Date(item.departure) - new Date(items[idx - 1].arrival)) / 1000 : null;
     card.innerHTML = `
-      <p class="tag">${god.tier}</p>
-      <h3>${god.name}</h3>
-      <p>Win rate ${god.winRate} • Pick rate ${god.pickRate}</p>
-      <h4>Popular Build</h4>
-      <ul>${buildList}</ul>
+      <h3>Segment ${idx + 1} (${item.mode})</h3>
+      <p>Depart: ${fmtDate(new Date(item.departure))}</p>
+      <p>Arrive: ${fmtDate(new Date(item.arrival))}</p>
+      <p>Travel: ${item.durationText} • Distance: ${item.distanceText}</p>
+      ${wait !== null ? `<p>Wait from previous: ${fmtDuration(Math.max(wait, 0))}</p>` : ''}
     `;
-    grid.appendChild(card);
+    results.appendChild(card);
   });
+
+  const summary = document.createElement('div');
+  summary.className = 'timeline-meta';
+  summary.innerHTML = `
+    <strong>Total travel time: ${fmtDuration(totalTravelSeconds)}</strong>
+    <strong>Total trip span: ${fmtDate(start)} → ${fmtDate(end)}</strong>
+  `;
+  results.appendChild(summary);
 }
 
-function renderMatches() {
-  const feed = document.getElementById('match-feed');
-  data.matches.forEach((match) => {
-    const card = document.createElement('div');
-    const isWin = match.result === 'Victory';
-    card.className = `match-card ${isWin ? 'win' : 'loss'}`;
-    card.innerHTML = `
-      <div>
-        <p class="result">${match.result}</p>
-        <p>${match.mode}</p>
-      </div>
-      <div>
-        <p class="teams">${match.teams}</p>
-        <p>MVP: ${match.mvp}</p>
-      </div>
-      <div class="meta">
-        <p>${match.duration}</p>
-        <p>KDA ${match.kda}</p>
-      </div>
-    `;
-    feed.appendChild(card);
-  });
-}
-
-function renderNews() {
-  const grid = document.getElementById('news-grid');
-  data.news.forEach((item) => {
-    const card = document.createElement('div');
-    card.className = 'news-card';
-    card.innerHTML = `
-      <p class="tag">${item.time}</p>
-      <h4>${item.title}</h4>
-      <p>${item.description}</p>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function renderStatus() {
-  const grid = document.getElementById('status-grid');
-  data.status.forEach((item) => {
-    const card = document.createElement('div');
-    card.className = 'status-card';
-    const stateClass = item.state.toLowerCase().replace(/\s+/g, '-');
-    card.innerHTML = `
-      <div class="status-card-head">
-        <h4>${item.name}</h4>
-        <span class="status-pill ${stateClass}">${item.state}</span>
-      </div>
-      <p>${item.detail}</p>
-      <p class="status-updated">${item.updated}</p>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function renderRoadmap() {
-  const grid = document.getElementById('roadmap-grid');
-  data.roadmap.forEach((item) => {
-    const card = document.createElement('div');
-    card.className = 'roadmap-card';
-    card.innerHTML = `
-      <div class="roadmap-phase">${item.phase}</div>
-      <h4>${item.title}</h4>
-      <p>${item.description}</p>
-      <p class="status">${item.status}</p>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function renderToolkit() {
-  const grid = document.getElementById('toolkit-grid');
-  data.toolkit.forEach((item) => {
-    const card = document.createElement('div');
-    card.className = 'toolkit-card';
-    const taskList = item.tasks.map((task) => `<li>${task}</li>`).join('');
-    const statusClass = item.status.toLowerCase();
-    card.innerHTML = `
-      <div class="toolkit-head">
-        <h4>${item.title}</h4>
-        <span class="status-pill ${statusClass}">${item.status}</span>
-      </div>
-      <p>${item.description}</p>
-      <h5>Includes</h5>
-      <ul>${taskList}</ul>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function renderOnboarding() {
-  const list = document.getElementById('onboarding-list');
-  data.onboarding.forEach((item) => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <span class="step">${item.step}</span>
-      <div>
-        <h4>${item.title}</h4>
-        <p>${item.detail}</p>
-      </div>
-    `;
-    list.appendChild(li);
-  });
-}
-
-function renderFaq() {
-  const grid = document.getElementById('faq-grid');
-  data.faqs.forEach((item) => {
-    const card = document.createElement('div');
-    card.className = 'faq-card';
-    card.innerHTML = `
-      <h4>${item.question}</h4>
-      <p>${item.answer}</p>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function renderPlayerCard(player) {
-  const container = document.getElementById('player-card');
-  if (!player) {
-    container.innerHTML = '<p class="hint">Try searching for NexusTitan, AuroraForge, or WardenPrime.</p>';
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const apiKey = document.getElementById('api-key').value.trim();
+  const segments = collectSegments().filter((s) => s.origin && s.destination && s.departure_time);
+  if (!apiKey) {
+    statusEl.textContent = 'Please provide a Google Maps API key.';
+    return;
+  }
+  if (!segments.length) {
+    statusEl.textContent = 'Please add at least one complete segment.';
     return;
   }
 
-  container.innerHTML = `
-    <p class="tag">${player.title}</p>
-    <h3>${player.name}</h3>
-    <p>Featured God: ${player.favoriteGod}</p>
-    <div class="stat-grid">
-      <div class="stat-block"><strong>${player.mmr}</strong><span>MMR</span></div>
-      <div class="stat-block"><strong>${player.winRate}%</strong><span>Win Rate</span></div>
-      <div class="stat-block"><strong>${player.kda}</strong><span>KDA</span></div>
-      <div class="stat-block"><strong>${player.damage.toLocaleString()}</strong><span>Avg Damage</span></div>
-      <div class="stat-block"><strong>${player.goldPerMin}</strong><span>Gold / Min</span></div>
-    </div>
-  `;
-}
-
-function bindSearch() {
-  const form = document.getElementById('player-search');
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const formData = new FormData(form);
-    const name = formData.get('player')?.trim().toLowerCase();
-    const player = data.players.find((p) => p.name.toLowerCase() === name);
-    renderPlayerCard(player);
-  });
-}
-
-function bindSignup() {
-  const form = document.getElementById('signup-form');
-  const status = document.getElementById('community-status');
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const formData = new FormData(form);
-    const name = formData.get('name') || 'friend';
-    const focus = formData.get('focus') || 'your priorities';
-    const focusLabel = focus.replace('-', ' ');
-    status.textContent = `Welcome, ${name}! We will send toolkit drops tailored to ${focusLabel}.`;
-    form.reset();
-  });
-}
-
-function bindProfileModal() {
-  const modal = document.getElementById('profile-modal');
-  const trigger = document.getElementById('create-profile-trigger');
-  const closeButton = document.getElementById('profile-close');
-  const form = document.getElementById('profile-form');
-  const message = document.getElementById('profile-message');
-  const searchInput = document.querySelector('#player-search input[name="player"]');
-
-  if (!modal || !trigger || !form) return;
-
-  const firstInput = form.querySelector('input');
-
-  const openModal = () => {
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
-    message.textContent = '';
-    if (firstInput) {
-      firstInput.focus();
+  statusEl.textContent = 'Building itinerary...';
+  try {
+    const sorted = [...segments].sort((a, b) => new Date(a.departure_time) - new Date(b.departure_time));
+    const enriched = [];
+    for (const seg of sorted) {
+      const route = await fetchDirections(apiKey, seg);
+      const departure = new Date(seg.departure_time);
+      const arrival = new Date(departure.getTime() + route.durationSeconds * 1000);
+      enriched.push({ ...seg, ...route, departure, arrival });
     }
-  };
+    renderItinerary(enriched);
+    statusEl.textContent = 'Itinerary ready.';
+  } catch (err) {
+    statusEl.textContent = err.message;
+  }
+});
 
-  const closeModal = () => {
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('modal-open');
-  };
+document.getElementById('add-segment').addEventListener('click', () => addSegment());
+document.getElementById('load-sample').addEventListener('click', () => {
+  container.innerHTML = '';
+  window.defaultSegments.forEach((seg) => addSegment(seg));
+});
 
-  trigger.addEventListener('click', openModal);
-  closeButton?.addEventListener('click', closeModal);
-  modal.addEventListener('click', (event) => {
-    if (event.target === modal) {
-      closeModal();
-    }
-  });
-
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const formData = new FormData(form);
-    const name = formData.get('name')?.toString().trim();
-    if (!name) {
-      message.textContent = 'A name is required to save the profile.';
-      return;
-    }
-
-    const newProfile = {
-      name,
-      title: formData.get('title')?.toString().trim() || 'Unranked',
-      favoriteGod: formData.get('favoriteGod')?.toString().trim() || 'Unknown',
-      mmr: Number(formData.get('mmr')) || 0,
-      winRate: Number(formData.get('winRate')) || 0,
-      kda: formData.get('kda')?.toString().trim() || '0 / 0 / 0',
-      damage: Number(formData.get('damage')) || 0,
-      goldPerMin: Number(formData.get('goldPerMin')) || 0,
-    };
-
-    const existingIndex = data.players.findIndex(
-      (player) => player.name.toLowerCase() === newProfile.name.toLowerCase(),
-    );
-    if (existingIndex >= 0) {
-      data.players.splice(existingIndex, 1);
-    }
-    data.players.unshift(newProfile);
-
-    renderPlayerCard(newProfile);
-    if (searchInput) {
-      searchInput.value = newProfile.name;
-    }
-    message.textContent = `Profile saved! You can now search for ${newProfile.name}.`;
-    form.reset();
-
-    setTimeout(() => {
-      closeModal();
-      document.getElementById('stats')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 900);
-  });
-}
-
-function init() {
-  renderLeaderboard();
-  renderGods();
-  renderMatches();
-  renderNews();
-  renderStatus();
-  renderRoadmap();
-  renderToolkit();
-  renderOnboarding();
-  renderFaq();
-  renderPlayerCard();
-  bindSearch();
-  bindSignup();
-  bindProfileModal();
-}
-
-document.addEventListener('DOMContentLoaded', init);
+addSegment();
